@@ -20,13 +20,12 @@ public class RouteService {
     double[][] distances;
 
     // starting the process
-    public Map<String, Double> startRoutingAlgorithm(OpenCageRequest addresses){
+    public List<List<Object>> startRoutingAlgorithm(OpenCageRequest addresses){
         this.places = addresses.getAddresses();
-        System.out.println(places);
 
         List<double[]> geoCodes = getLatLonList(addresses);
-        distances = buildDistanceMatrix(geoCodes);
 
+        distances = buildDistanceMatrix(geoCodes);
         List<Integer> routeIdx = nearestNeighbor();
         System.out.println("After applying nearest neighbour");
         printRoute(routeIdx);
@@ -39,16 +38,22 @@ public class RouteService {
 
     }
 
-    private Map<String, Double> generateFinalRouteWithDiatances(List<Integer> finalRouteIdx) {
-        Map<String, Double> result = new HashMap<>();
+    private List<List<Object>> generateFinalRouteWithDiatances(List<Integer> finalRouteIdx) {
+        List<List<Object>> result = new ArrayList<>();
+        List<String> placeResult = new ArrayList<>();
+        List<Double> distanceResult = new ArrayList<>();
 
-        for (int i=0; i<places.size(); i++){
-            if(i== places.size()-1){
-                result.put(places.get(finalRouteIdx.get(i)), routeCost(finalRouteIdx));
-                continue;
+        for(int i=0; i<finalRouteIdx.size(); i++){
+            placeResult.add(places.get(finalRouteIdx.get(i)));
+            if(i==places.size()){
+                distanceResult.add(routeCost(finalRouteIdx));
+            }else {
+            distanceResult.add(distances[finalRouteIdx.get(i)][finalRouteIdx.get(i+1)]);
             }
-            result.put(places.get(finalRouteIdx.get(i)), distances[finalRouteIdx.get(i)][finalRouteIdx.get(i+1)]);
         }
+
+        result.add(Collections.singletonList(placeResult));
+        result.add(Collections.singletonList(distanceResult));
 
         return result;
     }

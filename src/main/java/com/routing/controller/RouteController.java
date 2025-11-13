@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import java.util.List;
 
 @RestController
 public class RouteController {
@@ -18,7 +18,7 @@ public class RouteController {
     //you can extract locations from db or any sources
     // i am using postman to send list of address
     @GetMapping("/address-to-route")
-    public Map<String, Double> startAlgo(@RequestBody OpenCageRequest addresses) {
+    public List<List<Object>> startAlgo(@RequestBody OpenCageRequest addresses) {
         return routeService.startRoutingAlgorithm(addresses);
     }
 
